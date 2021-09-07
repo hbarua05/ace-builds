@@ -1537,7 +1537,7 @@ var supportedModes = {
     Apex:        ["apex|cls|trigger|tgr"],
     AQL:         ["aql"],
     AsciiDoc:    ["asciidoc|adoc"],
-    ASL:         ["dsl|asl"],
+    ASL:         ["dsl|asl|asl.json"],
     Assembly_x86:["asm|a"],
     AutoHotKey:  ["ahk"],
     BatchFile:   ["bat|cmd"],
@@ -1604,6 +1604,7 @@ var supportedModes = {
     Julia:       ["jl"],
     Kotlin:      ["kt|kts"],
     LaTeX:       ["tex|latex|ltx|bib"],
+    Latte:       ["latte"],
     LESS:        ["less"],
     Liquid:      ["liquid"],
     Lisp:        ["lisp"],
@@ -1620,6 +1621,7 @@ var supportedModes = {
     Maze:        ["mz"],
     MediaWiki:   ["wiki|mediawiki"],
     MEL:         ["mel"],
+    MIPS:        ["s|asm"],
     MIXAL:       ["mixal"],
     MUSHCode:    ["mc|mush"],
     MySQL:       ["mysql"],
@@ -1632,7 +1634,6 @@ var supportedModes = {
     OCaml:       ["ml|mli"],
     Pascal:      ["pas|p"],
     Perl:        ["pl|pm"],
-    Perl6:       ["p6|pl6|pm6"],
     pgSQL:       ["pgsql"],
     PHP:         ["php|inc|phtml|shtml|php3|php4|php5|phps|phpt|aw|ctp|module"],
     PHP_Laravel_blade: ["blade.php"],
@@ -1647,6 +1648,7 @@ var supportedModes = {
     Python:      ["py"],
     QML:         ["qml"],
     R:           ["r"],
+    Raku:        ["raku|rakumod|rakutest|p6|pl6|pm6"],
     Razor:       ["cshtml|asp"],
     RDoc:        ["Rd"],
     Red:         ["red|reds"],
@@ -1663,6 +1665,7 @@ var supportedModes = {
     SJS:         ["sjs"],
     Slim:        ["slim|skim"],
     Smarty:      ["smarty|tpl"],
+    Smithy:      ["smithy"],
     snippets:    ["snippets"],
     Soy_Template:["soy"],
     Space:       ["space"],
@@ -1678,7 +1681,7 @@ var supportedModes = {
     Textile:     ["textile"],
     Toml:        ["toml"],
     TSX:         ["tsx"],
-    Twig:        ["latte|twig|swig"],
+    Twig:        ["twig|swig"],
     Typescript:  ["ts|typescript|str"],
     Vala:        ["vala"],
     VBScript:    ["vbs|vb"],
@@ -1710,6 +1713,7 @@ var nameOverrides = {
     Perl6: "Perl 6",
     AutoHotKey: "AutoHotkey / AutoIt"
 };
+
 var modesByName = {};
 for (var name in supportedModes) {
     var data = supportedModes[name];
@@ -1770,137 +1774,6 @@ config.defineOptions(Editor.prototype, "editor", {
     }
 });
 
-});
-
-define("ace/theme/textmate",["require","exports","module","ace/lib/dom"], function(require, exports, module) {
-"use strict";
-
-exports.isDark = false;
-exports.cssClass = "ace-tm";
-exports.cssText = ".ace-tm .ace_gutter {\
-background: #f0f0f0;\
-color: #333;\
-}\
-.ace-tm .ace_print-margin {\
-width: 1px;\
-background: #e8e8e8;\
-}\
-.ace-tm .ace_fold {\
-background-color: #6B72E6;\
-}\
-.ace-tm {\
-background-color: #FFFFFF;\
-color: black;\
-}\
-.ace-tm .ace_cursor {\
-color: black;\
-}\
-.ace-tm .ace_invisible {\
-color: rgb(191, 191, 191);\
-}\
-.ace-tm .ace_storage,\
-.ace-tm .ace_keyword {\
-color: blue;\
-}\
-.ace-tm .ace_constant {\
-color: rgb(197, 6, 11);\
-}\
-.ace-tm .ace_constant.ace_buildin {\
-color: rgb(88, 72, 246);\
-}\
-.ace-tm .ace_constant.ace_language {\
-color: rgb(88, 92, 246);\
-}\
-.ace-tm .ace_constant.ace_library {\
-color: rgb(6, 150, 14);\
-}\
-.ace-tm .ace_invalid {\
-background-color: rgba(255, 0, 0, 0.1);\
-color: red;\
-}\
-.ace-tm .ace_support.ace_function {\
-color: rgb(60, 76, 114);\
-}\
-.ace-tm .ace_support.ace_constant {\
-color: rgb(6, 150, 14);\
-}\
-.ace-tm .ace_support.ace_type,\
-.ace-tm .ace_support.ace_class {\
-color: rgb(109, 121, 222);\
-}\
-.ace-tm .ace_keyword.ace_operator {\
-color: rgb(104, 118, 135);\
-}\
-.ace-tm .ace_string {\
-color: rgb(3, 106, 7);\
-}\
-.ace-tm .ace_comment {\
-color: rgb(76, 136, 107);\
-}\
-.ace-tm .ace_comment.ace_doc {\
-color: rgb(0, 102, 255);\
-}\
-.ace-tm .ace_comment.ace_doc.ace_tag {\
-color: rgb(128, 159, 191);\
-}\
-.ace-tm .ace_constant.ace_numeric {\
-color: rgb(0, 0, 205);\
-}\
-.ace-tm .ace_variable {\
-color: rgb(49, 132, 149);\
-}\
-.ace-tm .ace_xml-pe {\
-color: rgb(104, 104, 91);\
-}\
-.ace-tm .ace_entity.ace_name.ace_function {\
-color: #0000A2;\
-}\
-.ace-tm .ace_heading {\
-color: rgb(12, 7, 255);\
-}\
-.ace-tm .ace_list {\
-color:rgb(185, 6, 144);\
-}\
-.ace-tm .ace_meta.ace_tag {\
-color:rgb(0, 22, 142);\
-}\
-.ace-tm .ace_string.ace_regex {\
-color: rgb(255, 0, 0)\
-}\
-.ace-tm .ace_marker-layer .ace_selection {\
-background: rgb(181, 213, 255);\
-}\
-.ace-tm.ace_multiselect .ace_selection.ace_start {\
-box-shadow: 0 0 3px 0px white;\
-}\
-.ace-tm .ace_marker-layer .ace_step {\
-background: rgb(252, 255, 0);\
-}\
-.ace-tm .ace_marker-layer .ace_stack {\
-background: rgb(164, 229, 101);\
-}\
-.ace-tm .ace_marker-layer .ace_bracket {\
-margin: -1px 0 0 -1px;\
-border: 1px solid rgb(192, 192, 192);\
-}\
-.ace-tm .ace_marker-layer .ace_active-line {\
-background: rgba(0, 0, 0, 0.07);\
-}\
-.ace-tm .ace_gutter-active-line {\
-background-color : #dcdcdc;\
-}\
-.ace-tm .ace_marker-layer .ace_selected-word {\
-background: rgb(250, 250, 255);\
-border: 1px solid rgb(200, 200, 250);\
-}\
-.ace-tm .ace_indent-guide {\
-background: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==\") right repeat-y;\
-}\
-";
-exports.$id = "ace/theme/textmate";
-
-var dom = require("../lib/dom");
-dom.importCssString(exports.cssText, exports.cssClass);
 });
 
 define("ace/ext/whitespace",["require","exports","module","ace/lib/lang"], function(require, exports, module) {
@@ -3994,6 +3867,7 @@ var themeData = [
     ["Mono Industrial"      ,"mono_industrial"         ,  "dark"],
     ["Monokai"              ,"monokai"                 ,  "dark"],
     ["Nord Dark"            ,"nord_dark"               ,  "dark"],
+    ["One Dark"             ,"one_dark"                ,  "dark"],
     ["Pastel on dark"       ,"pastel_on_dark"          ,  "dark"],
     ["Solarized Dark"       ,"solarized_dark"          ,  "dark"],
     ["Terminal"             ,"terminal"                ,  "dark"],
@@ -6423,19 +6297,14 @@ var Autocomplete = function() {
             return this.openPopup(this.editor, "", keepPopupPosition);
         }
         var _id = this.gatherCompletionsId;
-        this.gatherCompletions(this.editor, function(err, results) {
-            var detachIfFinished = function() {
-                if (!results.finished) return;
-                return this.detach();
-            }.bind(this);
+        var detachIfFinished = function(results) {
+            if (!results.finished) return;
+            return this.detach();
+        }.bind(this);
 
+        var processResults = function(results) {
             var prefix = results.prefix;
-            var matches = results && results.matches;
-
-            if (!matches || !matches.length)
-                return detachIfFinished();
-            if (prefix.indexOf(results.prefix) !== 0 || _id != this.gatherCompletionsId)
-                return;
+            var matches = results.matches;
 
             this.completions = new FilteredList(matches);
 
@@ -6445,14 +6314,39 @@ var Autocomplete = function() {
             this.completions.setFilter(prefix);
             var filtered = this.completions.filtered;
             if (!filtered.length)
-                return detachIfFinished();
+                return detachIfFinished(results);
             if (filtered.length == 1 && filtered[0].value == prefix && !filtered[0].snippet)
-                return detachIfFinished();
+                return detachIfFinished(results);
             if (this.autoInsert && filtered.length == 1 && results.finished)
                 return this.insertMatch(filtered[0]);
 
             this.openPopup(this.editor, prefix, keepPopupPosition);
+        }.bind(this);
+
+        var isImmediate = true;
+        var immediateResults = null;
+        this.gatherCompletions(this.editor, function(err, results) {
+            var prefix = results.prefix;
+            var matches = results && results.matches;
+
+            if (!matches || !matches.length)
+                return detachIfFinished(results);
+            if (prefix.indexOf(results.prefix) !== 0 || _id != this.gatherCompletionsId)
+                return;
+            if (isImmediate) {
+                immediateResults = results;
+                return;
+            }
+
+            processResults(results);
         }.bind(this));
+        
+        isImmediate = false;
+        if (immediateResults) {
+            var results = immediateResults;
+            immediateResults = null;
+            processResults(results);
+        }
     };
 
     this.cancelContextMenu = function() {
@@ -6938,6 +6832,7 @@ exports.beautify = function(session) {
     var inBlock = false;
     var levels = {0: 0};
     var parents = [];
+    var caseBody = false;
 
     var trimNext = function() {
         if (nextToken && nextToken.value && nextToken.type !== 'string.regexp')
@@ -7099,6 +6994,9 @@ exports.beautify = function(session) {
                     trimLine();
                     if(value === "/>")
                         spaceBefore = true;
+                } else if (token.type === "keyword" && value.match(/^(case|default)$/)) {
+                    if (caseBody)
+                        unindent = 1;
                 }
                 if (breakBefore && !(token.type.match(/^(comment)$/) && !value.substr(0, 1).match(/^[/#]$/)) && !(token.type.match(/^(string)$/) && !value.substr(0, 1).match(/^['"]$/))) {
 
@@ -7127,16 +7025,16 @@ exports.beautify = function(session) {
                         code += tabString;
                 }
 
-
                 if (token.type === "keyword" && value.match(/^(case|default)$/)) {
-                    parents[depth] = value;
-                    depth++;
-                }
-
-
-                if (token.type === "keyword" && value.match(/^(break)$/)) {
+                    if (caseBody === false) {
+                        parents[depth] = value;
+                        depth++;
+                        caseBody = true;
+                    }
+                } else if (token.type === "keyword" && value.match(/^(break)$/)) {
                     if(parents[depth-1] && parents[depth-1].match(/^(case|default)$/)) {
                         depth--;
+                        caseBody = false;
                     }
                 }
                 if (token.type === "paren.lparen") {
@@ -7217,7 +7115,7 @@ exports.commands = [{
 
 });
 
-define("kitchen-sink/demo",["require","exports","module","ace/lib/fixoldbrowsers","ace/ext/rtl","ace/multi_select","kitchen-sink/inline_editor","kitchen-sink/dev_util","kitchen-sink/file_drop","ace/config","ace/lib/dom","ace/lib/net","ace/lib/lang","ace/lib/useragent","ace/lib/event","ace/theme/textmate","ace/edit_session","ace/undomanager","ace/keyboard/hash_handler","ace/virtual_renderer","ace/editor","ace/ext/whitespace","kitchen-sink/doclist","kitchen-sink/layout","kitchen-sink/util","ace/ext/elastic_tabstops_lite","ace/incremental_search","kitchen-sink/token_tooltip","ace/config","ace/worker/worker_client","ace/split","ace/ext/options","ace/ext/statusbar","ace/ext/emmet","ace/placeholder","ace/snippets","ace/ext/language_tools","ace/ext/beautify","ace/keyboard/keybinding","ace/commands/command_manager"], function(require, exports, module) {
+define("kitchen-sink/demo",["require","exports","module","ace/lib/fixoldbrowsers","ace/ext/rtl","ace/multi_select","kitchen-sink/inline_editor","kitchen-sink/dev_util","kitchen-sink/file_drop","ace/config","ace/lib/dom","ace/lib/net","ace/lib/lang","ace/lib/event","ace/theme/textmate","ace/edit_session","ace/undomanager","ace/keyboard/hash_handler","ace/virtual_renderer","ace/editor","ace/ext/whitespace","kitchen-sink/doclist","kitchen-sink/layout","kitchen-sink/util","ace/ext/elastic_tabstops_lite","ace/incremental_search","kitchen-sink/token_tooltip","ace/config","ace/worker/worker_client","ace/split","ace/ext/options","ace/ext/statusbar","ace/ext/emmet","ace/placeholder","ace/snippets","ace/ext/language_tools","ace/ext/beautify","ace/keyboard/keybinding","ace/commands/command_manager"], function(require, exports, module) {
 "use strict";
 
 require("ace/lib/fixoldbrowsers");
@@ -7236,7 +7134,6 @@ var env = {};
 var dom = require("ace/lib/dom");
 var net = require("ace/lib/net");
 var lang = require("ace/lib/lang");
-var useragent = require("ace/lib/useragent");
 
 var event = require("ace/lib/event");
 var theme = require("ace/theme/textmate");
