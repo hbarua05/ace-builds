@@ -1695,19 +1695,14 @@ var Autocomplete = function() {
             return this.openPopup(this.editor, "", keepPopupPosition);
         }
         var _id = this.gatherCompletionsId;
-        this.gatherCompletions(this.editor, function(err, results) {
-            var detachIfFinished = function() {
-                if (!results.finished) return;
-                return this.detach();
-            }.bind(this);
+        var detachIfFinished = function(results) {
+            if (!results.finished) return;
+            return this.detach();
+        }.bind(this);
 
+        var processResults = function(results) {
             var prefix = results.prefix;
-            var matches = results && results.matches;
-
-            if (!matches || !matches.length)
-                return detachIfFinished();
-            if (prefix.indexOf(results.prefix) !== 0 || _id != this.gatherCompletionsId)
-                return;
+            var matches = results.matches;
 
             this.completions = new FilteredList(matches);
 
@@ -1717,14 +1712,39 @@ var Autocomplete = function() {
             this.completions.setFilter(prefix);
             var filtered = this.completions.filtered;
             if (!filtered.length)
-                return detachIfFinished();
+                return detachIfFinished(results);
             if (filtered.length == 1 && filtered[0].value == prefix && !filtered[0].snippet)
-                return detachIfFinished();
+                return detachIfFinished(results);
             if (this.autoInsert && filtered.length == 1 && results.finished)
                 return this.insertMatch(filtered[0]);
 
             this.openPopup(this.editor, prefix, keepPopupPosition);
+        }.bind(this);
+
+        var isImmediate = true;
+        var immediateResults = null;
+        this.gatherCompletions(this.editor, function(err, results) {
+            var prefix = results.prefix;
+            var matches = results && results.matches;
+
+            if (!matches || !matches.length)
+                return detachIfFinished(results);
+            if (prefix.indexOf(results.prefix) !== 0 || _id != this.gatherCompletionsId)
+                return;
+            if (isImmediate) {
+                immediateResults = results;
+                return;
+            }
+
+            processResults(results);
         }.bind(this));
+        
+        isImmediate = false;
+        if (immediateResults) {
+            var results = immediateResults;
+            immediateResults = null;
+            processResults(results);
+        }
     };
 
     this.cancelContextMenu = function() {
@@ -2117,7 +2137,7 @@ var supportedModes = {
     Apex:        ["apex|cls|trigger|tgr"],
     AQL:         ["aql"],
     AsciiDoc:    ["asciidoc|adoc"],
-    ASL:         ["dsl|asl"],
+    ASL:         ["dsl|asl|asl.json"],
     Assembly_x86:["asm|a"],
     AutoHotKey:  ["ahk"],
     BatchFile:   ["bat|cmd"],
@@ -2184,6 +2204,7 @@ var supportedModes = {
     Julia:       ["jl"],
     Kotlin:      ["kt|kts"],
     LaTeX:       ["tex|latex|ltx|bib"],
+    Latte:       ["latte"],
     LESS:        ["less"],
     Liquid:      ["liquid"],
     Lisp:        ["lisp"],
@@ -2200,6 +2221,7 @@ var supportedModes = {
     Maze:        ["mz"],
     MediaWiki:   ["wiki|mediawiki"],
     MEL:         ["mel"],
+    MIPS:        ["s|asm"],
     MIXAL:       ["mixal"],
     MUSHCode:    ["mc|mush"],
     MySQL:       ["mysql"],
@@ -2212,7 +2234,6 @@ var supportedModes = {
     OCaml:       ["ml|mli"],
     Pascal:      ["pas|p"],
     Perl:        ["pl|pm"],
-    Perl6:       ["p6|pl6|pm6"],
     pgSQL:       ["pgsql"],
     PHP:         ["php|inc|phtml|shtml|php3|php4|php5|phps|phpt|aw|ctp|module"],
     PHP_Laravel_blade: ["blade.php"],
@@ -2227,6 +2248,7 @@ var supportedModes = {
     Python:      ["py"],
     QML:         ["qml"],
     R:           ["r"],
+    Raku:        ["raku|rakumod|rakutest|p6|pl6|pm6"],
     Razor:       ["cshtml|asp"],
     RDoc:        ["Rd"],
     Red:         ["red|reds"],
@@ -2243,6 +2265,7 @@ var supportedModes = {
     SJS:         ["sjs"],
     Slim:        ["slim|skim"],
     Smarty:      ["smarty|tpl"],
+    Smithy:      ["smithy"],
     snippets:    ["snippets"],
     Soy_Template:["soy"],
     Space:       ["space"],
@@ -2258,7 +2281,7 @@ var supportedModes = {
     Textile:     ["textile"],
     Toml:        ["toml"],
     TSX:         ["tsx"],
-    Twig:        ["latte|twig|swig"],
+    Twig:        ["twig|swig"],
     Typescript:  ["ts|typescript|str"],
     Vala:        ["vala"],
     VBScript:    ["vbs|vb"],
@@ -2290,6 +2313,7 @@ var nameOverrides = {
     Perl6: "Perl 6",
     AutoHotKey: "AutoHotkey / AutoIt"
 };
+
 var modesByName = {};
 for (var name in supportedModes) {
     var data = supportedModes[name];
@@ -2605,13 +2629,10 @@ prompt.commands = function(editor, callback) {
             var platform = handler.platform;
             var cbn = handler.byName;
             for (var i in cbn) {
-                var key;
-                if (cbn[i].bindKey && cbn[i].bindKey[platform] !== null) {
-                    key = cbn[i].bindKey["win"];
-                } else {
-                    key = "";
+                var key = cbn[i].bindKey;
+                if (typeof key !== "string") {
+                    key = key && key[platform] || "";
                 }
-
                 var commands = cbn[i];
                 var description = commands.description || normalizeName(commands.name);
                 if (!Array.isArray(commands))
